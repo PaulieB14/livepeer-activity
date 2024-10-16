@@ -12,11 +12,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     try {
+      console.log("Executing GraphQL query:", query);
       const result = await client.query({
         query: gql(query),
       });
+      console.log("Query result:", result);
       res.status(200).json(result);
     } catch (error) {
+      console.error("GraphQL Query Error:", error);
       res.status(500).json({ error: error.message });
     }
   } else {
