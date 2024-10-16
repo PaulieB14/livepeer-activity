@@ -1,7 +1,10 @@
 // src/app/page.tsx
-import { useQuery, ApolloProvider } from "@apollo/client";
+"use client"; // Add this line at the top
+
+import { useQuery } from "@apollo/client";
 import client from "../../lib/apolloClient";
 import { GET_BROADCASTERS } from "../../lib/queries";
+import { ApolloProvider } from "@apollo/client";
 
 const Page = () => {
   const { loading, error, data } = useQuery(GET_BROADCASTERS);
