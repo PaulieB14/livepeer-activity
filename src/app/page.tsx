@@ -1,7 +1,7 @@
 // pages/page.tsx
 import { useQuery } from "@apollo/client";
-import client from "../lib/apolloClient";
-import { GET_BROADCASTERS } from "../lib/queries";
+import client from "../../lib/apolloClient";
+import { GET_BROADCASTERS } from "../../lib/queries";
 
 const Page = () => {
   // Use the Apollo `useQuery` hook to execute the query
