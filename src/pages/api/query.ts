@@ -6,17 +6,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === "POST") {
     const { query } = req.body;
 
+    // Initialize Apollo Client
     const client = new ApolloClient({
-      uri: `https://gateway.thegraph.com/api/${process.env.GRAPH_API_KEY}/subgraphs/id/FE63YgkzcpVocxdCEyEYbvjYqEf2kb1A6daMYRxmejYC`,
+      uri: `https://gateway.thegraph.com/api/${process.env.NEXT_PUBLIC_GRAPH_API_KEY}/subgraphs/id/FE63YgkzcpVocxdCEyEYbvjYqEf2kb1A6daMYRxmejYC`,
       cache: new InMemoryCache(),
     });
 
     try {
-      console.log("Executing GraphQL query:", query);
+      console.log("GraphQL Query Executing: ", query);
       const result = await client.query({
         query: gql(query),
       });
-      console.log("Query result:", result);
+      console.log("GraphQL Query Result: ", result);
       res.status(200).json(result);
     } catch (error) {
       console.error("GraphQL Query Error:", error);
