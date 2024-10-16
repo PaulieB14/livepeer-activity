@@ -1,36 +1,65 @@
 // src/app/page.tsx
-"use client"; // Add this line at the top
-
-import { useQuery } from "@apollo/client";
-import client from "../../lib/apolloClient";
-import { GET_BROADCASTERS } from "../../lib/queries";
-import { ApolloProvider } from "@apollo/client";
+import { useEffect, useState } from "react";
 
 const Page = () => {
-  const { loading, error, data } = useQuery(GET_BROADCASTERS);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchBroadcasters = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch("/api/query", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: `
+              query {
+                broadcasters {
+                  id
+                  deposit
+                  reserve
+                }
+              }
+            `,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+
+        const result = await response.json();
+        setData(result.data);
+      } catch (e: any) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBroadcasters();
+  }, []);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
-      <h1>Broadcasters</h1>
-      <ul>
-        {data.broadcasters.map((broadcaster: any) => (
-          <li key={broadcaster.id}>
-            ID: {broadcaster.id}, Deposit: {broadcaster.deposit}, Reserve: {broadcaster.reserve}
-          </li>
-        ))}
-      </ul>
+      {data?.broadcasters.map((broadcaster: any) => (
+        <div key={broadcaster.id}>
+          <p>ID: {broadcaster.id}</p>
+          <p>Deposit: {broadcaster.deposit}</p>
+          <p>Reserve: {broadcaster.reserve}</p>
+        </div>
+      ))}
     </div>
   );
 };
 
-// Wrap the component with ApolloProvider here
-const WrappedPage = () => (
-  <ApolloProvider client={client}>
-    <Page />
-  </ApolloProvider>
-);
-
-export default WrappedPage;
+export default Page;
